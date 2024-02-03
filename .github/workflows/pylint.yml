@@ -1,11 +1,11 @@
 name: Pylint
 
 on:
-  push:
-    branches:
-      - 'main'
-    paths:
-      - '**.py'
+  #push:
+    #branches:
+      #      - 'main'
+      #paths:
+      #- '**.py'
   workflow_dispatch:
 
 
@@ -28,4 +28,4 @@ jobs:
         pip install -r ./dev-requirements.txt
     - name: Analysing the code with pylint
       run: |
-        pylint sqlite_database --rcfile pylint.toml
+        pylint --rcfile pylint.toml chatapp
