@@ -1,0 +1,11 @@
+flask
+flask-socketio
+flask-login
+sqlite-database
+https://github.com/RimuEirnarn/future_router/archive/main.tar.gz
+python-dotenv
+eventlet
+html-sanitizer
+markdown
+pygments
+pymdown-extensions

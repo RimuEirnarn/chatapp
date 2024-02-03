@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask-SocketIO Rooms Example</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+</head>
+<body>
+    <input type="text" id="roomInput" placeholder="Enter room name">
+    <button onclick="joinRoom()">Join Room</button>
+    <button onclick="leaveRoom()">Leave Room</button>
+    <input type="text" id="messageInput" placeholder="Type your message">
+    <button onclick="sendMessage()">Send Message</button>
+    <ul id="messages"></ul>
+
+    <script>
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+        function joinRoom() {
+            var room = document.getElementById('roomInput').value;
+            socket.emit('join_room', {room: room});
+        }
+
+        function leaveRoom() {
+            var room = document.getElementById('roomInput').value;
+            socket.emit('leave_room', {room: room});
+        }
+
+        function sendMessage() {
+            var room = document.getElementById('roomInput').value;
+            var message = document.getElementById('messageInput').value;
+            socket.emit('message', {room: room, message: message});
+        }
+
+        socket.on('message', function(data) {
+            var messages = document.getElementById('messages');
+            var li = document.createElement('li');
+            li.appendChild(document.createTextNode(data.text));
+            messages.appendChild(li);
+        });
+    </script>
+</body>
+</html>
+
