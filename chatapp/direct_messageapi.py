@@ -3,8 +3,12 @@ from flask_login import current_user
 from future_router import ResourceDummy
 from .api import API
 from .utils import http_error, http_success, timestamp_now
-from .database import rooms, users, user_room_relationship
+from .database import get_table
 from .rooms import generate_DM_id
+
+rooms = get_table("rooms")
+users = get_table("users")
+user_room_rel = get_table("user_room_relationship")
 
 @API.resource("/dm", alias="dm")
 class DirectMessage(ResourceDummy):
@@ -29,7 +33,7 @@ class DirectMessage(ResourceDummy):
         room_id = generate_DM_id(user_id, target)
         rooms.insert({'room_id': room_id, 'room_name': f'DM {user_id} and {target}', 'created_at': timestamp_now()})
 
-        user_room_relationship.insert({'user_id': user_id, 'room_id': room_id})
-        user_room_relationship.insert({'user_id': target, 'room_id': room_id})
+        user_room_rel.insert({'user_id': user_id, 'room_id': room_id})
+        user_room_rel.insert({'user_id': target, 'room_id': room_id})
     
         return http_success("The DM is created", data={'dm_id': room_id})

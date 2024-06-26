@@ -9,3 +9,4 @@ html-sanitizer
 markdown
 pygments
 pymdown-extensions
+flask-wtf

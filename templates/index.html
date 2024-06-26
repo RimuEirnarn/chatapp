@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flask-SocketIO Rooms Example</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    {%- include "includes/css-js.html" %}
 </head>
 <body>
     <input type="text" id="roomInput" placeholder="Enter room name">
@@ -20,12 +21,12 @@
 
         function joinRoom() {
             var room = document.getElementById('roomInput').value;
-            socket.emit('join_room', {room: room});
+            socket.emit('join_gc', {room: room});
         }
 
         function leaveRoom() {
             var room = document.getElementById('roomInput').value;
-            socket.emit('leave_room', {room: room});
+            socket.emit('leave_gc', {room: room});
         }
 
         function sendMessage() {
@@ -37,7 +38,7 @@
         socket.on('message', function(data) {
             var messages = document.getElementById('messages');
             var li = document.createElement('li');
-            li.appendChild(document.createTextNode(data.text));
+            li.appendChild(document.createTextNode(JSON.stringify(data)));
             messages.appendChild(li);
         });
     </script>

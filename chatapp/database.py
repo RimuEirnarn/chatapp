@@ -2,6 +2,7 @@ from uuid import UUID
 from sqlite_database import Database, real, text, integer
 from sqlite_database.functions import Function
 from atexit import register
+from werkzeug.security import generate_password_hash
 
 count = Function("COUNT")
 
@@ -67,8 +68,17 @@ def init():
         "created_at": 0.0,
         "user_id": str(UUID(int=0))
     })
+
+    users.insert({
+        "display_name": "test",
+        "username": "test",
+        "password": generate_password_hash("admin"),
+    "email": "system@localhost",
+    "created_at": 0.0,
+    "user_id": str(UUID(int=1000))
+
+    })
     database.sql.commit()
-    print("Database initialized")
 
 if not initialized():
     init()
@@ -78,6 +88,8 @@ users = database.table("users")
 rooms = database.table('rooms')
 user_room_relationship = database.table('user_room_relationship')
 messages = database.table('messages')
+get_table = database.table
+
 
 def database_close():
     print("Database closed")

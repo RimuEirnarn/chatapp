@@ -1,3 +1,4 @@
+from enum import IntFlag, auto, EJECT
 from datetime import datetime
 from functools import wraps
 from typing import Callable, Mapping, NamedTuple, Any
@@ -9,10 +10,18 @@ MESSAGE_CHANNEL = "message_logs"
 
 class ClientSession(NamedTuple):
     username: str
+    display_name: str
     rooms: tuple[str, ...]
     current_room: str
     socket_id: str
     data: dict
+
+class UserPerm(IntFlag, boundary=EJECT):
+    NO_PERM = 0
+    BANNED = 0
+    MEMBERS = auto()
+    ADMIN = auto()
+    OWNER = auto()
 
 def http_message(status: str, msg: str, data: Any):
     """Send a API message"""
@@ -60,11 +69,14 @@ def fabricate(app: SocketIO):
                 rooms_ = tuple(rooms()[1:])
                 if room not in rooms_:
                     room = ''
-                session = ClientSession("username",
+                #print(type(current_user), current_user)
+                session = ClientSession(current_user.username, # type: ignore
+                                        display_name=current_user.display_name,
                                         rooms=rooms_,
                                         current_room=room,
                                         socket_id=request.sid, # type: ignore
                                         data=data)
+                print(session)
                 return func(session)
             return wrapper
         return outter

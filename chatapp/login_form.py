@@ -1,6 +1,6 @@
-from flask_login import UserMixin, LoginManager
-from .database import users
+from flask_login import LoginManager
 from wtforms import BooleanField, StringField, PasswordField, Form, validators # type: ignore
+from .users import User
 
 login_manager = LoginManager()
 
@@ -23,10 +23,7 @@ class RegistrationForm(Form):
     accept_tos = BooleanField("tos_accept", [validators.DataRequired()])
     remember = BooleanField('remember')
 
-class User(UserMixin):
-    def get_id(self):
-       return super().get_id()
-
 @login_manager.user_loader
-def load_user(uid: str): 
-    return users.select_one({'uid': uid})
+def load_user(uid: str):
+    #print("login_form.py", uid)
+    return User.get(uid)

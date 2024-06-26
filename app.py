@@ -1,4 +1,4 @@
-from os import urandom
+from os import urandom, environ
 from flask import Flask, flash, render_template, request, redirect
 from flask_login import current_user, login_required, login_user, logout_user
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -10,19 +10,21 @@ from chatapp.database import users, FIRST_TIME as DB_FIRST_TIME
 from chatapp.utils import timestamp_now
 from chatapp.routes import init
 from chatapp.login_form import login_manager, RegistrationForm, LoginForm
+from chatapp.users import User, USABLE_COLUMNS
 
 load_dotenv()
 app = Flask(__name__)
-app.config['SECRET_KEY'] = urandom(512)
+app.config['SECRET_KEY'] = environ.get('APP_KEY', urandom(512))
 socketio.init_app(app)
 init(app)
 login_manager.init_app(app)
 
 @app.route('/')
 def index():
+    print(current_user)
     if current_user.is_authenticated:
         return render_template('index.html')
-    return render_template('noauth.index.html')
+    return redirect('/login')
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
@@ -34,14 +36,16 @@ def login():
         flash("Registration failed", category="error")
         return render_template('login.html', form=form)
 
-    user_ = users.select_one({'username': form.username})
+    user_ = users.select_one({'username': form.username.data})
     if not user_:
         flash("Account doesn't exists", category='error')
         return render_template('login.html', form=form)
-    if not check_password_hash(user_.password, form.password): # type: ignore
+    if not check_password_hash(user_.password, form.password.data): # type: ignore
         flash("Password doesn't match", category='error')
         return render_template('login.html', form=form)
-    login_user(user_, remember=form.remember) # type: ignore
+    #print("POST /login", user_)
+    d = {a:b for a, b in user_.items() if a in USABLE_COLUMNS}
+    login_user(User(**user_), remember=True) # type: ignore
     return redirect("/")
 
 @app.get("/logout")
@@ -60,16 +64,16 @@ def register():
         flash("Registration failed", category="error")
         return render_template('register.html', form=form)
 
-    users.insert({'username': form.username,
-                  'display_name': form.display_name,
-                  'password': generate_password_hash(form.password), # type: ignore
-                  'email': form.email,
+    users.insert({'username': form.username.data,
+                  'display_name': form.display_name.data,
+                  'password': generate_password_hash(form.password.data), # type: ignore
+                  'email': form.email.data,
                   'user_id': str(uuid4()),
                   'created_at': timestamp_now()
     })
     flash('Your account has been created!')
-    user = users.select({'username': form.username})
-    login_user(user, remember=form.remember) # type: ignore
+    user = users.select_one({'username': form.username}, only=('user_id',))
+    login_user(User.get(user['user_id']), remember=form.remember) # type: ignore
     return redirect('/')
 
 @app.get("/chat")
@@ -79,6 +83,12 @@ def chat():
     # The front-end may gather things in runtime and since things happens, we may not inclusively uses /chat/<room>
     # since that's too bad for users and URL. We need to not change anything.
     ...
+    return ""
+
+@app.get("/settings")
+@login_required
+def settings():
+    return render_template("index.html")
 
 def init_admin(data: dict[str, str]):
     users.insert({
