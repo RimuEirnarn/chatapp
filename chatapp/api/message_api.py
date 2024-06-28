@@ -3,7 +3,7 @@
 # pylint: disable=arguments-renamed
 from flask_login import current_user
 from sqlite_database.signature import op
-from . import API  # pylint: disable=import-error
+from . import API
 from ..utils import UserPerm, http_success
 from ..database import get_table
 

@@ -5,7 +5,7 @@ from enum import EJECT, IntFlag, auto
 from flask import request
 from flask_login import current_user
 from future_router import ResourceDummy
-from . import API  # pylint: disable=import-error
+from . import API
 from ..utils import http_error, http_success, timestamp_now, UserPerm
 from ..database import get_table
 from ..rooms import generate_groupchat_id, identify_room

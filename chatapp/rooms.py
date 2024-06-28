@@ -10,7 +10,7 @@ GC_IDENTIFIER = "GroupChat/"
 PV_IDENTIFIER = "Private/"
 
 
-def generate_DM_id(uid1: str, uid2: str) -> str:
+def generate_direct_message_id(uid1: str, uid2: str) -> str:
     """Generate a Direct Message Room ID based on 2 users' id."""
     base_rid = str(uuid4())
     # hexed = hex((uid_1.int * uid_2.int) * randbelow(4096))[2:]

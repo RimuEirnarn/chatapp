@@ -1,5 +1,5 @@
 """Import utils"""
 
-# pylint: disable=import-error,unused-import
+# pylint: disable=unused-import
 
 from . import direct_messageapi, groupchat_api, message_api

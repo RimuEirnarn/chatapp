@@ -3,10 +3,10 @@
 from flask import request
 from flask_login import current_user
 from future_router import ResourceDummy
-from . import API  # pylint: disable=import-error
+from . import API
 from ..utils import http_error, http_success, timestamp_now
 from ..database import get_table
-from ..rooms import generate_DM_id
+from ..rooms import generate_direct_message_id
 
 rooms = get_table("rooms")
 users = get_table("users")
@@ -34,7 +34,7 @@ class DirectMessage(ResourceDummy):
         if not users.select_one({"user_id": target}):
             return http_error("Target ID cannot be found")
 
-        room_id = generate_DM_id(user_id, target)
+        room_id = generate_direct_message_id(user_id, target)
         rooms.insert(
             {
                 "room_id": room_id,
