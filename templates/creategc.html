@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="/static/external/js/jquery.min.js"></script>
+  </head>
+  <body>
+    <h1>Groupchat list</h1>
+    <div>
+      <table id="groupchat-list">
+        <thead>
+          <tr>
+            <th>Room ID</th>
+            <th>Room Name</th>
+            <th>User ID</th>
+            <th>User Perm</th>
+            <th>Created at</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <hr />
+    <p>Cretae new group chat</p>
+    <form action="/api/gc" method="post">
+      <input
+        type="text"
+        name="gc_name"
+        id="gc_name"
+        placeholder="Groupchat name"
+      />
+      <input type="submit" value="Create" />
+    </form>
+
+    <script>
+      fetch("/api/gc")
+        .then((a) => a.json())
+        .then((a) => {
+          let gcs = $("#groupchat-list > tbody");
+          if (!a) return;
+          for (const data of a["data"]) {
+            gcs.append(
+              `<tr>
+                    <td>${data.room_id}</td>
+                    <td>${data.room_name}</td>
+                    <td>${data.user_id}</td>
+                    <td>${data.user_perm}</td>
+                    <td>${new Date(data.created_at * 1000)}</td>
+                </tr<`
+            );
+          }
+        });
+    </script>
+  </body>
+</html>
