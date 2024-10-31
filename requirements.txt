@@ -10,3 +10,4 @@ markdown
 pygments
 pymdown-extensions
 flask-wtf
+werkzeug>=3.0.6 # not directly required, pinned by Snyk to avoid a vulnerability
